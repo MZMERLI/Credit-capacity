@@ -5,7 +5,7 @@ from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 import joblib
-#import uvicorn
+import uvicorn
 #avoid some errors  
 import warnings
 warnings.filterwarnings("ignore", category = UserWarning)
