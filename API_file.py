@@ -70,11 +70,11 @@ async def get_prediction(client_id: Customer):
 #  lancement de l'application   (  mode local  et non en mode production  )
 #  affichage:   Located at: http://127.0.0.1:8000/AnyNameHere
 
-import uvicorn
-import nest_asyncio
+#import uvicorn
+#import nest_asyncio
 
-nest_asyncio.apply()
-uvicorn.run(app, host="127.0.0.1",port=8000)
+#nest_asyncio.apply()
+#uvicorn.run(app, host="127.0.0.1",port=8000)
 #=============================================
 
 #if __name__ == "__main__":
