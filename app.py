@@ -16,16 +16,16 @@ warnings.filterwarnings("ignore", category = UserWarning)
 #  PATH = 'dataset/'
 # Chargement des données  
 def load_data ():
-    data = pd.read_csv('C:/Users/HP ELITEBOOK/Desktop/Nouveau dossier/test_data.csv')
+    data = pd.read_csv('data_try.csv')
     # Un échantillon à tester
     #data = data.sample(frac=0.05)
     # Garder les colonnes avec 20 % ou plus de valeurs manquantes
     data = data.dropna(thresh=0.8*len(data), axis=1)
     return data
 # Chargement du modèle  
-model = joblib.load('C:/Users/HP ELITEBOOK/Desktop/Nouveau dossier/LGBM_P7.pkl')
+model = joblib.load('LGBM_P7.pkl')
 # Chargement du preprocessor
-loaded_preprocessor = joblib.load('C:/Users/HP ELITEBOOK/Desktop/Nouveau dossier/preprocessor_P7.joblib')
+loaded_preprocessor = joblib.load('preprocessor_P7.joblib')
 
 # Preprocessing
 data = load_data()
