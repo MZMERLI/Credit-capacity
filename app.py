@@ -1,19 +1,16 @@
-# ============================= scripts ==================================
-## Importation des librarys
+#=============================================scripts========================
+# Importation des librarys
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import pandas as pd
+import numpy as np
 import joblib
 #import uvicorn
-from flask import Flask, jsonify
-import pandas as pd
-import pickle
-#from lightgbm import LGBMClassifier
-
 #avoid some errors  
-
 import warnings
 warnings.filterwarnings("ignore", category = UserWarning)
+#=============================================
 
-
-#  PATH = 'dataset/'
 # Chargement des données  
 def load_data ():
     data = pd.read_csv('data_try.csv')
@@ -33,55 +30,79 @@ X = data.drop(['SK_ID_CURR'], axis=1)
 X_ = loaded_preprocessor.fit_transform(X)
 X = pd.DataFrame(X_, index=X.index, columns=X.columns)
 X['SK_ID_CURR'] = data['SK_ID_CURR']
+#=============================================
 
+#create the application
+app = FastAPI(
+    title = "Credit Score API",
+    version = 1.0,
+    description = "Simple API to make predict cluster of client."
+)
 
+@app.get("/")
+def index():
+    return {"message":"Évaluez la capacité de crédit de votre client"}
+"""
+# Définir une classe contenant les ID à saisir:
+class Customer(BaseModel):
+    id: int
 
-#app = flask.Flask(__name__)
-app = Flask(__name__)
+@app.post("/",tags = ["credit_score"])
+async def get_prediction(client_id: Customer):
 
+    if client_id.dict()['id'] not in X['SK_ID_CURR'].unique():
+        raise HTTPException(
+            status_code=404, detail=f"Client ID {client_id.dict()['id']} not found")
+        
+    #df = X.loc[data['SK_ID_CURR'] == client_id['id']] #client_id
+    df = X[X['SK_ID_CURR'] == int(client_id.dict()['id'])]
+    df = df.drop(['SK_ID_CURR'], axis=1)
+    per_pos = model.predict_proba(df)[0][1]
 
-@app.route('/')
-def hello():
-    return "Bienvenue, L'API pour mon projet d'Openclassrooms"
+    #return JSONResponse({"Credit score":round(per_pos, 3)})
+    return {
+    'Credit score': round(per_pos, 3)
+    }
+"""
+@app.get("/api/predictions/clients/{id}")
+async def predict(id: int):
+    """ 
+    EndPoint to get the probability honor/compliance of a client
+    """ 
+    clients_id = X["SK_ID_CURR"].tolist()
 
+    if id not in clients_id:
+        raise HTTPException(status_code=404, detail="client's id not found")
+    else:
+        
+        # Filtering by client's id
+        df = X[X["SK_ID_CURR"] == id]
+        #df = df.drop(df.columns[[0, 1]], axis=1)
+        df = df.drop(['SK_ID_CURR'], axis=1)
+        
+        # Predicting
+        per_pos = model.predict_proba(df)[0][1]
+        
+    return {
+        "probability1" : round(per_pos, 3)
+    }
 
-@app.route('/prediction_credit/<id_client>')  #, methods=['GET'])
-def prediction_credit(id_client):
-
-    print('id client = ', id_client)
-   
-    #Récupération des données du client en question
-   
-    ID = int(id_client)
-    data_client = X[X['SK_ID_CURR'] == ID]
-    data_client = data_client.drop(['SK_ID_CURR'], axis=1)
-   
-    print('La taille du vecteur data_client  = ', data_client.shape)
-
-    proba = model.predict_proba(data_client)
- 
-    #DEBUG
-    print('L''identificateur du client : ', id_client)
- 
-    dict_final = {
-        'proba' : float(proba[0][0])
-        ##  Ajouter d'autres parametres
-        }
-   
-    print('Lancer une nouvelle Prédiction : \n', dict_final)
-   
-
-     # Sauvegarde le résultat sous forme de JSON file
-       
-    return jsonify(dict_final)
-
+#=============================================
 
 #  lancement de l'application   (  mode local  et non en mode production  )
+#  affichage:   Located at: http://127.0.0.1:8000/AnyNameHere
 
-#def create_app():
-#       return app
+#import uvicorn
+#import nest_asyncio
 
+#nest_asyncio.apply()
+#uvicorn.run(app, host="127.0.0.1",port=8000)
+#=============================================
 
 if __name__ == "__main__":
     app.debug = True
     app.run()
+#=============================================
+
+#=============================================
+
