@@ -18,6 +18,7 @@ def load_data ():
     #data = data.sample(frac=0.05)
     # Garder les colonnes avec 20 % ou plus de valeurs manquantes
     data = data.dropna(thresh=0.8*len(data), axis=1)
+    data.drop(columns = {'Unnamed: 0'}  , inplace = True)
     return data
 # Chargement du modèle  
 model = joblib.load('LGBM_P7.pkl')
