@@ -1,2 +1,3 @@
-# exmple_2DS
-exmple_2DS
+# Link for application:
+
+https://mzmerli-credit-capacity-streamlit-streamlit-file-gzjerk.streamlitapp.com/
